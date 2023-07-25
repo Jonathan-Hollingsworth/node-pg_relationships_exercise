@@ -43,7 +43,7 @@ router.post('/', async function(req, res, next) {
         const code = slugify(name, {remove: /[!"#$%&'()*+,.\/:;<=>?@[\]^_·`{|}~]/g, lower: true})
         const results = await db.query(`INSERT INTO companies (code, name, description)
         VALUES ($1, $2, $3) RETURNING code, name, description`, [code, name, description]);
-        return res.json({companies: results.rows[0]})
+        return res.status(201).json({companies: results.rows[0]})
     } catch (error) {
         return next(error)
     }
@@ -58,7 +58,7 @@ router.put('/:code', async function(req, res, next) {
         if(results.rows.length === 0){
             throw new ExpressError('Company could not be found', 404)
         }
-        return res.status(201).json({company: results.rows[0]})
+        return res.json({company: results.rows[0]})
     } catch (error) {
         return next(error)
     }
