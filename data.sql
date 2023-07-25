@@ -1,7 +1,9 @@
 \c biztime
 
+DROP TABLE IF EXISTS companies_industries;
 DROP TABLE IF EXISTS invoices;
 DROP TABLE IF EXISTS companies;
+DROP TABLE IF EXISTS industries;
 
 CREATE TABLE companies (
     code text PRIMARY KEY,
