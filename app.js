@@ -7,11 +7,13 @@ const app = express();
 const ExpressError = require("./expressError")
 
 const cRoutes = require('./routes/companies')
-const iRoutes = require('./routes/invoices')
+const invRoutes = require('./routes/invoices')
+const indRoutes = require('./routes/industries')
 
 app.use(express.json());
 app.use("/companies", cRoutes)
-app.use("/invoices", iRoutes)
+app.use("/invoices", invRoutes)
+app.use("/industries", indRoutes)
 
 
 /** 404 handler */
