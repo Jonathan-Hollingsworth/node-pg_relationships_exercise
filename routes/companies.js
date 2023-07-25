@@ -1,4 +1,5 @@
 const express = require("express");
+const slugify = require("slugify")
 const router = new express.Router();
 const ExpressError = require("../expressError")
 const db = require("../db")
@@ -15,8 +16,11 @@ router.get('/', async function(req, res, next) {
 router.get('/:code', async function(req, res, next) {
     try {
         const code = req.params.code
-        const cResults = await db.query(`SELECT code, name, description FROM companies WHERE code=$1`, [code]);
-        const iResults = await db.query(`SELECT id FROM invoices WHERE comp_code=$1`, [code]);
+        let cQuery = db.query(`SELECT code, name, description FROM companies WHERE code=$1`, [code]);
+        let iQuery = db.query(`SELECT id FROM invoices WHERE comp_code=$1`, [code]);
+        const results = await Promise.all([cQuery, iQuery])
+        const cResults = results[0] //results of cQuery
+        const iResults = results[1] //results of iQuery
         if(cResults.rows.length === 0){
             throw new ExpressError('Company could not be found', 404)
         }
@@ -29,7 +33,8 @@ router.get('/:code', async function(req, res, next) {
 
 router.post('/', async function(req, res, next) {
     try {
-        const {code, name, description} = req.body
+        const {name, description} = req.body
+        const code = slugify(name, {remove: /[!"#$%&'()*+,.\/:;<=>?@[\]^_·`{|}~]/g, lower: true})
         const results = await db.query(`INSERT INTO companies (code, name, description)
         VALUES ($1, $2, $3) RETURNING code, name, description`, [code, name, description]);
         return res.json({companies: results.rows[0]})
