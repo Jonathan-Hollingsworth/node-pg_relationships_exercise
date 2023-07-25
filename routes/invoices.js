@@ -32,7 +32,8 @@ router.post('/', async function(req, res, next) {
     try {
         const {comp_code, amt} = req.body
         const results = await db.query(`INSERT INTO invoices (comp_code, amt) VALUES ($1, $2)
-        RETURNING id, comp_code, amt, paid, add_date, paid_date`, [comp_code, amt])
+                                        RETURNING id, comp_code, amt, paid, add_date, paid_date`, 
+                                        [comp_code, amt])
         if(results.rows.length === 0){
             throw new ExpressError('Invoice could not be found', 404)
         }
@@ -44,9 +45,24 @@ router.post('/', async function(req, res, next) {
 
 router.put('/:id', async function(req, res, next) {
     try {
-        const results = await db.query(`UPDATE invoices SET amt=$1 WHERE id=$2
-        RETURNING id, comp_code, amt, paid, add_date, paid_date`, [req.body.amt, req.params.id])
-        return res.json({invoice: results.rows[0]})
+        const checkInvoice = await db.query(`SELECT paid FROM invoices WHERE id=$1`, [req.params.id])
+        if ((checkInvoice.rows[0].paid) && !(req.body.paid)) {
+            const results = await db.query(`UPDATE invoices SET amt=$1, paid=$2, paid_date=null WHERE id=$3
+                                            RETURNING id, comp_code, amt, paid, add_date, paid_date`, 
+                                            [req.body.amt, req.body.paid, req.params.id])
+            return res.json({invoice: results.rows[0]})
+        }
+        if (!(checkInvoice.rows[0].paid) && (req.body.paid)) {
+            const results = await db.query(`UPDATE invoices SET amt=$1, paid=$2, paid_date=CURRENT_DATE WHERE id=$3
+                                            RETURNING id, comp_code, amt, paid, add_date, paid_date`, 
+                                            [req.body.amt, req.body.paid, req.params.id])
+            return res.json({invoice: results.rows[0]})
+        } else {
+            const results = await db.query(`UPDATE invoices SET amt=$1 WHERE id=$2
+                                            RETURNING id, comp_code, amt, paid, add_date, paid_date`, 
+                                            [req.body.amt, req.params.id])
+            return res.json({invoice: results.rows[0]})
+        }
     } catch (error) {
         return next(error)
     }
