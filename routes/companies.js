@@ -43,7 +43,7 @@ router.post('/', async function(req, res, next) {
         const code = slugify(name, {remove: /[!"#$%&'()*+,.\/:;<=>?@[\]^_·`{|}~]/g, lower: true})
         const results = await db.query(`INSERT INTO companies (code, name, description)
         VALUES ($1, $2, $3) RETURNING code, name, description`, [code, name, description]);
-        return res.status(201).json({companies: results.rows[0]})
+        return res.status(201).json({company: results.rows[0]})
     } catch (error) {
         return next(error)
     }
