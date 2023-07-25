@@ -34,9 +34,6 @@ router.post('/', async function(req, res, next) {
         const results = await db.query(`INSERT INTO invoices (comp_code, amt) VALUES ($1, $2)
                                         RETURNING id, comp_code, amt, paid, add_date, paid_date`, 
                                         [comp_code, amt])
-        if(results.rows.length === 0){
-            throw new ExpressError('Invoice could not be found', 404)
-        }
         return res.json({invoice: results.rows[0]})
     } catch (error) {
         return next(error)
