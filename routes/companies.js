@@ -25,7 +25,6 @@ router.get('/:code', async function(req, res, next) {
         const results = await Promise.all([cQuery, iQuery])
         const cResults = results[0] //results of cQuery
         const iResults = results[1] //results of iQuery
-        console.log(cResults)
         if(cResults.rows.length === 0){
             throw new ExpressError('Company could not be found', 404)
         }
