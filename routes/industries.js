@@ -73,7 +73,7 @@ router.put('/:code', async function(req, res, next) {
 router.delete('/:code', async function(req, res, next) {
     try {
         const code = req.params.code
-        await db.query(`DELETE FROM industries WHERE code=$2`, [code]);
+        await db.query(`DELETE FROM industries WHERE code=$1`, [code]);
         return res.json({message: "deleted"});
     } catch (error) {
         return next(error);
