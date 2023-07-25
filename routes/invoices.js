@@ -46,18 +46,18 @@ router.post('/', async function(req, res, next) {
 router.put('/:id', async function(req, res, next) {
     try {
         const checkInvoice = await db.query(`SELECT paid FROM invoices WHERE id=$1`, [req.params.id])
-        if ((checkInvoice.rows[0].paid) && !(req.body.paid)) {
+        if ((checkInvoice.rows[0].paid) && !(req.body.paid)) { //Are we un-paying a paid invoice
             const results = await db.query(`UPDATE invoices SET amt=$1, paid=$2, paid_date=null WHERE id=$3
                                             RETURNING id, comp_code, amt, paid, add_date, paid_date`, 
                                             [req.body.amt, req.body.paid, req.params.id])
             return res.json({invoice: results.rows[0]})
         }
-        if (!(checkInvoice.rows[0].paid) && (req.body.paid)) {
+        if (!(checkInvoice.rows[0].paid) && (req.body.paid)) {  //Are we paying an unpaid invoice
             const results = await db.query(`UPDATE invoices SET amt=$1, paid=$2, paid_date=CURRENT_DATE WHERE id=$3
                                             RETURNING id, comp_code, amt, paid, add_date, paid_date`, 
                                             [req.body.amt, req.body.paid, req.params.id])
             return res.json({invoice: results.rows[0]})
-        } else {
+        } else { //If we aren't doing either
             const results = await db.query(`UPDATE invoices SET amt=$1 WHERE id=$2
                                             RETURNING id, comp_code, amt, paid, add_date, paid_date`, 
                                             [req.body.amt, req.params.id])
