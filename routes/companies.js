@@ -16,16 +16,23 @@ router.get('/', async function(req, res, next) {
 router.get('/:code', async function(req, res, next) {
     try {
         const code = req.params.code
-        let cQuery = db.query(`SELECT code, name, description FROM companies WHERE code=$1`, [code]);
+        let cQuery = db.query(`SELECT c.code, c.name, c.description, i.industry FROM companies AS c
+                                 LEFT JOIN companies_industries AS ci
+                                   ON ci.comp_code = c.code
+                                 LEFT JOIN industries AS i ON i.code = ci.ind_code 
+                               WHERE c.code=$1`, [code]);
         let iQuery = db.query(`SELECT id FROM invoices WHERE comp_code=$1`, [code]);
         const results = await Promise.all([cQuery, iQuery])
         const cResults = results[0] //results of cQuery
         const iResults = results[1] //results of iQuery
+        console.log(cResults)
         if(cResults.rows.length === 0){
             throw new ExpressError('Company could not be found', 404)
         }
-        cResults.rows[0].invoices = iResults.rows
-        return res.json({company: cResults.rows[0]})
+        const {name, description} = cResults.rows[0]
+        const industries = cResults.rows.map(r => r.industry)
+        const invoices = iResults.rows
+        return res.json({company: {code, name, description, invoices, industries}})
     } catch (error) {
         return next(error)
     }
