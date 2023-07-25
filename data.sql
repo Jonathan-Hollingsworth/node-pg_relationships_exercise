@@ -48,7 +48,7 @@ INSERT INTO industries
          ('it', 'Information Technology');
 
 INSERT INTO companies_industries
-  VALUES ('apple', 'con-elec'),
-         ('apple', 'software'),
+  VALUES ('apple', 'consumer-electronics'),
+         ('apple', 'software-services'),
          ('apple', 'osp'),
          ('ibm', 'it');
