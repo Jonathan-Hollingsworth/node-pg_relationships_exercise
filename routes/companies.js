@@ -58,7 +58,7 @@ router.put('/:code', async function(req, res, next) {
         if(results.rows.length === 0){
             throw new ExpressError('Company could not be found', 404)
         }
-        return res.json({company: results.rows[0]})
+        return res.status(201).json({company: results.rows[0]})
     } catch (error) {
         return next(error)
     }

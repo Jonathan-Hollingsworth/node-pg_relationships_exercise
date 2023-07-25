@@ -34,7 +34,7 @@ router.post('/', async function(req, res, next) {
         const results = await db.query(`INSERT INTO invoices (comp_code, amt) VALUES ($1, $2)
                                         RETURNING id, comp_code, amt, paid, add_date, paid_date`, 
                                         [comp_code, amt])
-        return res.json({invoice: results.rows[0]})
+        return res.status(201).json({invoice: results.rows[0]})
     } catch (error) {
         return next(error)
     }
