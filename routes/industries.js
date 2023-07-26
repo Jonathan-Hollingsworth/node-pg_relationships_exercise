@@ -30,23 +30,6 @@ router.post('/', async function(req, res, next) {
     };
 });
 
-router.post('/', async function(req, res, next) {
-    try {
-        const {industry} = req.body
-        let code
-        if(!(req.body.code)){
-            code = slugify(industry, {remove: /[!"#$%&'()*+,.\/:;<=>?@[\]^_·`{|}~]/g, lower: true})
-        } else {
-            code = req.body.code
-        }
-        const results = await db.query(`INSERT INTO industries VALUES ($1, $2)
-                                        RETURNING code, industry`, [code, industry]);
-        return res.json({industry: results.rows[0]});
-    } catch (error) {
-        return next(error);
-    };
-});
-
 router.post('/company', async function(req, res, next) {
     try {
         const {comp_code, ind_code} = req.body
