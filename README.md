@@ -20,7 +20,7 @@ You can add edit and delete invoices as well: (Required JSON will be given in pa
 
 ## `/industries`
 
-All of them will be displayed at once and there is no route for getting a specific one (`GET /invdustries`)  
+All of them will be displayed at once and there is no route for getting a specific one (`GET /inddustries`)  
 You can add edit and delete industries as well: (Required JSON will be given in parentheses)
 > - `POST /industries` ({code, industry}) (Not including a code will have the system make one for you)
 > - `PUT /industries/:code` ({industry})
