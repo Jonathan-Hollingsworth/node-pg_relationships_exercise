@@ -43,6 +43,9 @@ router.post('/', async function(req, res, next) {
 router.put('/:id', async function(req, res, next) {
     try {
         const checkInvoice = await db.query(`SELECT paid FROM invoices WHERE id=$1`, [req.params.id])
+        if(checkInvoice.rows.length === 0){
+            throw new ExpressError('Invoice could not be found', 404)
+        }
         if ((checkInvoice.rows[0].paid) && !(req.body.paid)) { //Are we un-paying a paid invoice
             const results = await db.query(`UPDATE invoices SET amt=$1, paid=$2, paid_date=null WHERE id=$3
                                             RETURNING id, comp_code, amt, paid, add_date, paid_date`, 
