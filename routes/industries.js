@@ -35,9 +35,6 @@ router.post('/company', async function(req, res, next) {
         const {comp_code, ind_code} = req.body
         const results = await db.query(`INSERT INTO companies_industries VALUES ($1, $2)
                                         RETURNING comp_code, ind_code`, [comp_code, ind_code]);
-        if(results.rows.length === 0){
-            throw new ExpressError('Company could not be found', 404)
-        }
         return res.status(201).json({connection: results.rows[0]});
     } catch (error) {
         return next(error);
