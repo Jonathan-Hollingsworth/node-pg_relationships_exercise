@@ -26,4 +26,4 @@ You can add edit and delete industries as well: (Required JSON will be given in 
 > - `PUT /industries/:code` ({industry})
 > - `DELETE /industries/:code`
 
-You can even connect an industry to any number of companies (`POST /industries/company` {comp_code, ind_code})
+You can even connect an industry to any number of companies (`POST /industries/company` ({comp_code, ind_code}))
