@@ -70,8 +70,11 @@ router.put('/:id', async function(req, res, next) {
 
 router.delete('/:id', async function(req, res, next) {
     try {
-        await db.query(`DELETE FROM invoices WHERE id=$1`, [req.params.id]);
-        return res.json({message: "deleted"})
+        const results = await db.query(`DELETE FROM invoices WHERE id=$1 RETURNING id`, [req.params.id]);
+        if(results.rows.length === 0){
+            throw new ExpressError('Invoice could not be found', 404)
+        };
+        return res.json({message: "deleted"});
     } catch (error) {
         return next(error)
     }
