@@ -24,7 +24,7 @@ router.post('/', async function(req, res, next) {
         }
         const results = await db.query(`INSERT INTO industries VALUES ($1, $2)
                                         RETURNING code, industry`, [code, industry]);
-        return res.json({industry: results.rows[0]});
+        return res.status(201).json({industry: results.rows[0]});
     } catch (error) {
         return next(error);
     };
